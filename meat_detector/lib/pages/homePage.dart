@@ -101,7 +101,7 @@ class _HomePageState extends State<HomePage> {
           Icon(
             ikon,
             size: screenHeight(context)*(1/18),
-            color: Colors.red,
+            color: warna2(),
           ),
           Text(
             ket,
@@ -123,7 +123,7 @@ class _HomePageState extends State<HomePage> {
         width: double.infinity,
         height: screenHeight(context)*(1/1.6),
         decoration: BoxDecoration(
-          color: Colors.red,
+          color: warna2(),
           borderRadius: BorderRadius.only(
             topLeft: Radius.circular(35),
             topRight: Radius.circular(35)

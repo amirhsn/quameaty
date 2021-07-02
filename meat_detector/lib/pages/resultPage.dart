@@ -17,6 +17,7 @@ class ResultPage extends StatefulWidget {
 }
 
 class _ResultPageState extends State<ResultPage> {
+  TextEditingController _catatanController = TextEditingController();
 
   var labelKey = '';
   var labelValues;
@@ -39,64 +40,163 @@ class _ResultPageState extends State<ResultPage> {
           elevation: 0,
         ),
         backgroundColor: warna1(),
-        body: Center(
-          child: Container(
-            width: screenWidth(context)*(1/1.2),
-            height: screenHeight(context)*(1/1.6),
-            decoration: BoxDecoration(
-              color: warna1(),
-              borderRadius: BorderRadius.circular(15),
-              boxShadow: [BoxShadow(
-                color: Colors.grey,
-                blurRadius: 2,
-                spreadRadius: 2,
-              )]
-            ),
-            margin: EdgeInsets.only(
-              bottom: screenHeight(context)*(1/15)
-            ),
-            padding: EdgeInsets.symmetric(
-              horizontal: screenWidth(context)*(1/20)
-            ),
-            child: Column(
-              mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-              children: [
-                Container(
-                  width: screenHeight(context)*(1/5),
-                  height: screenHeight(context)*(1/5),
-                  //color: Colors.orange,
-                  child: ClipRRect(
-                    borderRadius: BorderRadius.circular(20),
-                    child: Image.file(
-                      File(widget.imgPath.path),
-                      fit: BoxFit.cover,
-                    ),
-                  )
-                ),
-                SizedBox(
-                  height: screenHeight(context)*(1/100),
-                ),
-                Center(
-                  child: Text(
-                    'HASIL',
-                    style: TextStyle(
-                      color: Colors.black,
-                      letterSpacing: 2,
-                      fontWeight: FontWeight.bold,
-                      fontSize: screenHeight(context)*(1/25),
-                    ),
+        body: Padding(
+          padding: EdgeInsets.all(screenWidth(context)*(1/25)),
+          child: ListView(
+            children: [
+              Center(
+                child: Container(
+                  width: screenWidth(context)*(1/1.2),
+                  height: screenHeight(context)*(1/2.1),
+                  decoration: BoxDecoration(
+                    color: warna1(),
+                    borderRadius: BorderRadius.circular(15),
+                    boxShadow: [BoxShadow(
+                      color: Colors.grey,
+                      blurRadius: 2,
+                      spreadRadius: 2,
+                    )]
+                  ),
+                  margin: EdgeInsets.only(
+                    bottom: screenHeight(context)*(1/40),
+                    top: screenHeight(context)*(0.001)
+                  ),
+                  padding: EdgeInsets.symmetric(
+                    horizontal: screenWidth(context)*(1/20)
+                  ),
+                  child: Column(
+                    mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                    children: [
+                      Container(
+                        margin: EdgeInsets.only(
+                          top: screenHeight(context)*(1/80)
+                        ),
+                        width: screenHeight(context)*(1/5),
+                        height: screenHeight(context)*(1/5),
+                        //color: Colors.orange,
+                        child: ClipRRect(
+                          borderRadius: BorderRadius.circular(20),
+                          child: Image.file(
+                            File(widget.imgPath.path),
+                            fit: BoxFit.cover,
+                          ),
+                        )
+                      ),
+                      SizedBox(
+                        height: screenHeight(context)*(1/100),
+                      ),
+                      Center(
+                        child: Text(
+                          'HASIL',
+                          style: TextStyle(
+                            color: Colors.black,
+                            letterSpacing: 2,
+                            fontWeight: FontWeight.bold,
+                            fontSize: screenHeight(context)*(1/25),
+                          ),
+                        ),
+                      ),
+                      Divider(
+                        color: Colors.red,
+                        indent: 60,
+                        endIndent: 60,
+                      ),
+                      rowHasil('Jenis', 'Ayam'),
+                      rowHasil('Kualitas', mapHasilIndex(widget.index)),
+                      rowHasil('Akurasi', konversiHasilConf(widget.confidence)),
+                    ],
                   ),
                 ),
-                Divider(
-                  color: Colors.red,
-                  indent: 60,
-                  endIndent: 60,
+              ),
+              Container(
+                width: double.infinity,
+                height: screenHeight(context)*(1/3.5),
+                padding: EdgeInsets.symmetric(
+                  horizontal: screenWidth(context)*(1/30)
                 ),
-                rowHasil('Jenis', 'Ayam'),
-                rowHasil('Kualitas', mapHasilIndex(widget.index)),
-                rowHasil('Akurasi', konversiHasilConf(widget.confidence)),
-              ],
-            ),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text(
+                      'Catatan',
+                      style: TextStyle(
+                        color: Colors.black,
+                        fontSize: screenHeight(context)*(1/35),
+                      ),
+                    ),
+                    SizedBox(
+                      height: screenHeight(context)*(1/65),
+                    ),
+                    TextFormField(
+                      controller: _catatanController,
+                      maxLines: 3,
+                      decoration: InputDecoration(
+                        isDense: true,
+                        fillColor: warna1(),
+                        filled: true,
+                        hintText: 'Catatan barangkali ada?',
+                        border: OutlineInputBorder(
+                          borderRadius: BorderRadius.circular(5),
+                          borderSide: BorderSide(
+                            color: Colors.black,
+                          ),
+                        ),
+                        enabledBorder: OutlineInputBorder(
+                          borderRadius: BorderRadius.circular(5),
+                          borderSide: BorderSide(
+                            color: Colors.black,
+                          ),
+                        ),
+                        focusedBorder: OutlineInputBorder(
+                          borderRadius: BorderRadius.circular(5),
+                          borderSide: BorderSide(
+                            color: Colors.black,
+                          ),
+                        ),
+                        contentPadding:EdgeInsets.all(10),
+                      ),
+                    ),
+                    SizedBox(
+                      height: screenHeight(context)*(1/40),
+                    ),
+                    Center(
+                      child: GestureDetector(
+                        onTap: (){},
+                        child: Container(
+                          height: screenHeight(context)*(1/15),
+                          width: screenWidth(context)*(1/2.7),
+                          decoration: BoxDecoration(
+                            color: Colors.black,
+                            borderRadius: BorderRadius.circular(50)
+                          ),
+                          padding: EdgeInsets.symmetric(
+                            horizontal: screenWidth(context)*(1/20),
+                            vertical: screenHeight(context)*(1/100)
+                          ),
+                          child: Row(
+                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                            children: [
+                              Text(
+                                'Simpan',
+                                style: TextStyle(
+                                  color: warna1(),
+                                  letterSpacing: 2,
+                                  fontSize: screenWidth(context)*(1/25)
+                                ),
+                              ),
+                              Icon(
+                                Icons.save_alt_outlined,
+                                color: warna1(),
+                              ),
+                            ],
+                          ),
+                        ),
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+            ],
           ),
         ),
     );

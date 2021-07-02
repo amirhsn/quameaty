@@ -8,3 +8,4 @@ double screenWidth(BuildContext context) => MediaQuery.of(context).size.width;
 
 //Warna dasar
 Color warna1() => Color(0xFFF5F5F5);
+Color warna2() => Color(0xFFFF6464);

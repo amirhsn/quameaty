@@ -216,7 +216,7 @@ class _ScanPageState extends State<ScanPage> {
         width: screenWidth(context)*(1/9),
         child: Icon(
           CupertinoIcons.photo_fill_on_rectangle_fill,
-          color: Colors.red,
+          color: warna2(),
           size: screenHeight(context)*(1/25),
         ),
       ),
@@ -243,7 +243,7 @@ class _ScanPageState extends State<ScanPage> {
         width: screenWidth(context)*(1/9),
         child: Icon(
           Icons.arrow_back_outlined,
-          color: Colors.red,
+          color: warna2(),
           size: screenHeight(context)*(1/25),
         ),
       ),
@@ -273,7 +273,7 @@ class _ScanPageState extends State<ScanPage> {
         width: screenWidth(context)*(1/9),
         child: Icon(
           getFlashIcon(cameraController.value.flashMode),
-          color: Colors.red,
+          color: warna2(),
           size: screenHeight(context)*(1/25),
         ),
       ),
@@ -289,7 +289,7 @@ class _ScanPageState extends State<ScanPage> {
         height: screenWidth(context)*(1/6),
         width: screenWidth(context)*(1/6),
         decoration: BoxDecoration(
-          color: Colors.red,
+          color: warna2(),
           borderRadius: BorderRadius.circular(100),
           boxShadow: [BoxShadow(
             color: Colors.grey,
