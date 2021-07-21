@@ -1,3 +1,5 @@
+import 'dart:convert';
+
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:meat_detector/models/history.dart';
@@ -109,6 +111,7 @@ class _HistoryPageState extends State<HistoryPage> {
                     context, 
                     riwayat[index].hasilDeteksi,
                     riwayat[index].tanggal.substring(0,10),
+                    riwayat[index].image
                   );
                 },
               ),
@@ -119,7 +122,7 @@ class _HistoryPageState extends State<HistoryPage> {
     );
   }
 
-  Widget historyContainer(context, String hasilDeteksi, String tanggal){
+  Widget historyContainer(context, String hasilDeteksi, String tanggal, String gambar){
     return Container(
       margin: EdgeInsets.only(
         top: screenHeight(context)*(1/100)
@@ -144,9 +147,12 @@ class _HistoryPageState extends State<HistoryPage> {
         mainAxisAlignment: MainAxisAlignment.spaceBetween,
         children: [
           Container(
-            color: Colors.blueGrey,
             width: screenWidth(context)*(1/7),
             height: screenWidth(context)*(1/7),
+            child: Image.memory(
+              base64Decode(gambar),
+              fit: BoxFit.cover,
+            ),
           ),
           Container(
             width: screenWidth(context)*(1/3),
