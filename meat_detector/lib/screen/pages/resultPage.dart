@@ -1,10 +1,14 @@
+import 'dart:convert';
 import 'dart:io';
-
+import 'package:get/get.dart';
 import 'package:camera/camera.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:meat_detector/components/constant.dart';
-import 'package:meat_detector/pages/homePage.dart';
+import 'package:meat_detector/models/history.dart';
+import 'package:meat_detector/screen/components/constant.dart';
+import 'package:path/path.dart';
+import 'package:sqflite/sqflite.dart';
+import 'homePage.dart';
 
 class ResultPage extends StatefulWidget {
   final dynamic imgPath;
@@ -18,11 +22,36 @@ class ResultPage extends StatefulWidget {
 
 class _ResultPageState extends State<ResultPage> {
   TextEditingController _catatanController = TextEditingController();
+  String image64;
+  String hasilDeteksi, akurasi, tanggal, catatan;
 
-  var labelKey = '';
-  var labelValues;
-  bool isLoading = true;
+  @override
+  void initState() {
+    // TODO: implement initState
+    super.initState();
+    hasilDeteksi = mapHasilIndex(widget.index);
+    akurasi = konversiHasilConf(widget.confidence);
+    imageToBase64(File(widget.imgPath.path));
+  }
   
+  Future<void> insertHistory(History history) async{
+    //Ambil referensi ke db
+    final database = openDatabase(
+      // Set the path to the database. Note: Using the `join` function from the
+      // `path` package is best practice to ensure the path is correctly
+      // constructed for each platform.
+      join(await getDatabasesPath(), 'history_database.db'),
+      version: 1,
+    );
+    final db = await database;
+
+    await db.insert(
+      'history', 
+      history.toMap(),
+      conflictAlgorithm: ConflictAlgorithm.replace,
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -34,8 +63,10 @@ class _ResultPageState extends State<ResultPage> {
               color: Colors.black,
             ), 
             onPressed: (){
-              Navigator.pushReplacement(context, MaterialPageRoute(builder: (context) => HomePage()));
-            }
+                Get.off(
+                  HomePage(),
+                );
+             }
           ),
           elevation: 0,
         ),
@@ -52,9 +83,9 @@ class _ResultPageState extends State<ResultPage> {
                     color: warna1(),
                     borderRadius: BorderRadius.circular(15),
                     boxShadow: [BoxShadow(
-                      color: Colors.grey,
-                      blurRadius: 2,
-                      spreadRadius: 2,
+                      color: bayangan(),
+                      blurRadius: 5,
+                      spreadRadius: 5,
                     )]
                   ),
                   margin: EdgeInsets.only(
@@ -97,13 +128,13 @@ class _ResultPageState extends State<ResultPage> {
                         ),
                       ),
                       Divider(
-                        color: Colors.red,
+                        color: Colors.black,
                         indent: 60,
                         endIndent: 60,
                       ),
-                      rowHasil('Jenis', 'Ayam'),
-                      rowHasil('Kualitas', mapHasilIndex(widget.index)),
-                      rowHasil('Akurasi', konversiHasilConf(widget.confidence)),
+                      rowHasil(context, 'Jenis', 'Ayam'),
+                      rowHasil(context, 'Kualitas', hasilDeteksi),
+                      rowHasil(context, 'Akurasi', akurasi),
                     ],
                   ),
                 ),
@@ -127,33 +158,43 @@ class _ResultPageState extends State<ResultPage> {
                     SizedBox(
                       height: screenHeight(context)*(1/65),
                     ),
-                    TextFormField(
-                      controller: _catatanController,
-                      maxLines: 3,
-                      decoration: InputDecoration(
-                        isDense: true,
-                        fillColor: warna1(),
-                        filled: true,
-                        hintText: 'Catatan barangkali ada?',
-                        border: OutlineInputBorder(
-                          borderRadius: BorderRadius.circular(5),
-                          borderSide: BorderSide(
-                            color: Colors.black,
+                    Container(
+                      decoration: BoxDecoration(
+                        boxShadow: [BoxShadow(
+                          blurRadius: 2,
+                          color: bayangan(),
+                          offset: Offset(0,0),
+                          spreadRadius: 2
+                        )]
+                      ),
+                      child: TextFormField(
+                        controller: _catatanController,
+                        maxLines: 3,
+                        decoration: InputDecoration(
+                          isDense: true,
+                          fillColor: warna1(),
+                          filled: true,
+                          hintText: 'Catatan barangkali ada?',
+                          border: OutlineInputBorder(
+                            borderRadius: BorderRadius.circular(5),
+                            borderSide: BorderSide(
+                              color: warna1(),
+                            ),
                           ),
-                        ),
-                        enabledBorder: OutlineInputBorder(
-                          borderRadius: BorderRadius.circular(5),
-                          borderSide: BorderSide(
-                            color: Colors.black,
+                          enabledBorder: OutlineInputBorder(
+                            borderRadius: BorderRadius.circular(5),
+                            borderSide: BorderSide(
+                              color: warna1(),
+                            ),
                           ),
-                        ),
-                        focusedBorder: OutlineInputBorder(
-                          borderRadius: BorderRadius.circular(5),
-                          borderSide: BorderSide(
-                            color: Colors.black,
+                          focusedBorder: OutlineInputBorder(
+                            borderRadius: BorderRadius.circular(5),
+                            borderSide: BorderSide(
+                              color: warna1(),
+                            ),
                           ),
+                          contentPadding:EdgeInsets.all(10),
                         ),
-                        contentPadding:EdgeInsets.all(10),
                       ),
                     ),
                     SizedBox(
@@ -161,13 +202,28 @@ class _ResultPageState extends State<ResultPage> {
                     ),
                     Center(
                       child: GestureDetector(
-                        onTap: (){},
+                        onTap: ()async{
+                          var dataSaatIni = History(
+                            image: image64,
+                            akurasi: akurasi,
+                            hasilDeteksi: hasilDeteksi,
+                            catatan: _catatanController.text,
+                            tanggal: DateTime.now().toString(),
+                          );
+                          await insertHistory(dataSaatIni).then((value) => print('Sukses'));
+                        },
                         child: Container(
                           height: screenHeight(context)*(1/15),
                           width: screenWidth(context)*(1/2.7),
                           decoration: BoxDecoration(
                             color: Colors.black,
-                            borderRadius: BorderRadius.circular(50)
+                            borderRadius: BorderRadius.circular(50),
+                            boxShadow: [BoxShadow(
+                              blurRadius: 2,
+                              color: bayangan(),
+                              offset: Offset(0,0),
+                              spreadRadius: 2
+                            )]
                           ),
                           padding: EdgeInsets.symmetric(
                             horizontal: screenWidth(context)*(1/20),
@@ -203,7 +259,13 @@ class _ResultPageState extends State<ResultPage> {
   }
 //===========================================================//
 //===========================================================//
-  Widget rowHasil(String bagian, String hasil){
+  Future imageToBase64(File image) async{
+    List<int> imageBytes = await image.readAsBytes();
+    String base64Image = base64Encode(imageBytes);
+    image64 = base64Image;
+  }
+
+  Widget rowHasil(BuildContext context, String bagian, String hasil){
     return Container(
       padding: EdgeInsets.symmetric(
         horizontal: screenWidth(context)*(1/20)
@@ -222,7 +284,7 @@ class _ResultPageState extends State<ResultPage> {
           Text(
             '$hasil',
             style: TextStyle(
-              color: Colors.red,
+              color: Colors.black,
               fontSize: screenWidth(context)*(1/20),
               fontWeight: FontWeight.bold
             ),
@@ -246,4 +308,6 @@ class _ResultPageState extends State<ResultPage> {
     nilaiConfDouble = nilaiConfDouble.toStringAsFixed(2);
     return nilaiConfDouble+' %';
   }
+
+  
 }

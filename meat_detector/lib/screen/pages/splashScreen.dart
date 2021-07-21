@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
-import 'package:meat_detector/components/constant.dart';
-import 'package:meat_detector/pages/homePage.dart';
+import 'package:meat_detector/screen/components/constant.dart';
+
+import 'homePage.dart';
 
 class SplashScreen extends StatefulWidget {
   const SplashScreen({ key }) : super(key: key);

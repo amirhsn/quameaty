@@ -1,5 +1,9 @@
 import 'package:flutter/material.dart';
-import 'package:meat_detector/components/constant.dart';
+import 'package:get/get.dart';
+import 'package:meat_detector/models/history.dart';
+import 'package:meat_detector/screen/components/constant.dart';
+import 'package:path/path.dart';
+import 'package:sqflite/sqflite.dart';
 
 class HistoryPage extends StatefulWidget {
   const HistoryPage({ key }) : super(key: key);
@@ -9,6 +13,50 @@ class HistoryPage extends StatefulWidget {
 }
 
 class _HistoryPageState extends State<HistoryPage> {
+
+  List riwayat;
+
+  // Ambil data
+  Future<List<History>> history() async {
+    //Ambil referensi ke db
+    final database = openDatabase(
+      // Set the path to the database. Note: Using the `join` function from the
+      // `path` package is best practice to ensure the path is correctly
+      // constructed for each platform.
+      join(await getDatabasesPath(), 'history_database.db'),
+      version: 1,
+    );
+    // Get a reference to the database.
+    final db = await database;
+
+    // Query the table for all The History.
+    final List<Map<String, dynamic>> maps = await db.query('history');
+
+    // Convert the List<Map<String, dynamic> into a List<History>.
+    return List.generate(maps.length, (i) {
+      return History(
+        id: maps[i]['id'],
+        image: maps[i]['image'],
+        akurasi: maps[i]['akurasi'],
+        catatan: maps[i]['catatan'],
+        hasilDeteksi: maps[i]['hasilDeteksi'],
+        tanggal: maps[i]['tanggal'],
+      );
+    });
+  }
+
+  Future<void> getRiwayat() async {
+    riwayat = await history();
+    setState(() {});
+  }
+
+  @override
+    void initState() {
+      // TODO: implement initState
+      getRiwayat();
+      super.initState();
+    }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -18,7 +66,7 @@ class _HistoryPageState extends State<HistoryPage> {
         elevation: 0,
         leading: IconButton(
           onPressed: (){
-            Navigator.pop(context);
+            Get.back();
           },
           color: Colors.black,
           icon: Icon(
@@ -47,29 +95,22 @@ class _HistoryPageState extends State<HistoryPage> {
             ),
             Container(
               width: double.infinity,
-              height: screenHeight(context)*(1/1.4),
+              height: screenHeight(context)*(1/1.3),
               padding: EdgeInsets.symmetric(
                 horizontal: screenWidth(context)*(1/100)
               ),
               decoration: BoxDecoration(
                 borderRadius: BorderRadius.circular(10)
               ),
-              child: ListView(
-                children: [
-                  historyContainer(context),
-                  historyContainer(context),
-                  historyContainer(context),
-                  historyContainer(context),
-                  historyContainer(context),
-                  historyContainer(context),
-                  historyContainer(context),
-                  historyContainer(context),
-                  historyContainer(context),
-                  historyContainer(context),
-                  historyContainer(context),
-                  historyContainer(context),
-                  historyContainer(context),
-                ],
+              child: ListView.builder(
+                itemCount: riwayat == null ? 0 : riwayat.length,
+                itemBuilder: (context, index){
+                  return historyContainer(
+                    context, 
+                    riwayat[index].hasilDeteksi,
+                    riwayat[index].tanggal.substring(0,10),
+                  );
+                },
               ),
             ),
           ],
@@ -78,7 +119,7 @@ class _HistoryPageState extends State<HistoryPage> {
     );
   }
 
-  Widget historyContainer(context){
+  Widget historyContainer(context, String hasilDeteksi, String tanggal){
     return Container(
       margin: EdgeInsets.only(
         top: screenHeight(context)*(1/100)
@@ -115,14 +156,14 @@ class _HistoryPageState extends State<HistoryPage> {
               crossAxisAlignment: CrossAxisAlignment.end,
               children: [
                 Text(
-                  'Tidak Segar',
+                  hasilDeteksi,
                   style: TextStyle(
                     color: warna1(),
                     letterSpacing: 2
                   ),
                 ),
                 Text(
-                  '24/06/2021',
+                  tanggal,
                   style: TextStyle(
                     color: warna1(),
                     letterSpacing: 2,

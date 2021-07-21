@@ -4,8 +4,8 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'dart:io';
 import 'package:image_picker/image_picker.dart';
-import 'package:meat_detector/components/constant.dart';
-import 'package:meat_detector/pages/resultPage.dart';
+import 'package:meat_detector/screen/components/constant.dart';
+import 'package:meat_detector/screen/pages/resultPage.dart';
 import 'package:tflite/tflite.dart';
 
 class ScanPage extends StatefulWidget {
@@ -152,8 +152,8 @@ class _ScanPageState extends State<ScanPage> {
                   color: warna1(),
                   borderRadius: BorderRadius.circular(100),
                   boxShadow: [BoxShadow(
-                    blurRadius: 9,
-                    color: Colors.grey,
+                    blurRadius: 2,
+                    color: bayangan(),
                     spreadRadius: 2,
                     offset: Offset(0,0)
                   )]
@@ -216,7 +216,7 @@ class _ScanPageState extends State<ScanPage> {
         width: screenWidth(context)*(1/9),
         child: Icon(
           CupertinoIcons.photo_fill_on_rectangle_fill,
-          color: warna2(),
+          color: Colors.black,
           size: screenHeight(context)*(1/25),
         ),
       ),
@@ -233,7 +233,7 @@ class _ScanPageState extends State<ScanPage> {
           borderRadius: BorderRadius.circular(100),
           color: warna1(),
           boxShadow: [BoxShadow(
-            color: Colors.grey,
+            color: bayangan(),
             blurRadius: 2,
             spreadRadius: 2,
             offset: Offset(0,0)
@@ -243,7 +243,7 @@ class _ScanPageState extends State<ScanPage> {
         width: screenWidth(context)*(1/9),
         child: Icon(
           Icons.arrow_back_outlined,
-          color: warna2(),
+          color: Colors.black,
           size: screenHeight(context)*(1/25),
         ),
       ),
@@ -273,7 +273,7 @@ class _ScanPageState extends State<ScanPage> {
         width: screenWidth(context)*(1/9),
         child: Icon(
           getFlashIcon(cameraController.value.flashMode),
-          color: warna2(),
+          color: Colors.black,
           size: screenHeight(context)*(1/25),
         ),
       ),
@@ -289,7 +289,7 @@ class _ScanPageState extends State<ScanPage> {
         height: screenWidth(context)*(1/6),
         width: screenWidth(context)*(1/6),
         decoration: BoxDecoration(
-          color: warna2(),
+          color: Colors.black,
           borderRadius: BorderRadius.circular(100),
           boxShadow: [BoxShadow(
             color: Colors.grey,
